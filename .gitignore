@@ -1,0 +1,15 @@
+# Datos de Redis generados por Compose
+data/
+**/data/
+
+# Secretos locales
+.env
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Python
+__pycache__/
+*.pyc

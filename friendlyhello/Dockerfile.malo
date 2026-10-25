@@ -1,0 +1,21 @@
+# SOLO PARA EL PASO 4 (comparación de caché): orden MALO de las capas.
+# Uso: docker build -f Dockerfile.malo -t friendlyhello:malo .
+FROM python:3.14-slim
+
+WORKDIR /app
+
+# Se copia TODO el código antes de instalar dependencias:
+# cualquier cambio en app.py invalida la capa de pip install
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN useradd --system --create-home app
+USER app
+
+ENV NAME=World
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --start-interval=2s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2)"
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "app:app"]
